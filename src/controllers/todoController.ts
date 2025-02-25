@@ -50,3 +50,19 @@ export const createTodo = async (req: Request, res: Response) => {
     }
   }
 };
+
+export const updateTodo = (req: Request, res: Response) => {
+  const { id } = req.params;
+  res.status(200).json({
+    success: true,
+    msg: `update todo ${id}`,
+  });
+};
+
+export const deleteTodo = (req: Request, res: Response) => {
+  const { id } = req.params;
+  res.status(200).json({
+    success: true,
+    msg: {},
+  });
+};
