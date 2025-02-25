@@ -23,3 +23,30 @@ export const getTodo = (req: Request, res: Response) => {
     message: `show todo no ${id}`,
   });
 };
+
+// @description  create Todo
+// @route        api/v1/todos
+// @access       public
+
+export const createTodo = async (req: Request, res: Response) => {
+  try {
+    const todo = await Todo.create(req.body);
+    res.status(201).json({
+      success: true,
+      data: todo,
+    });
+  } catch (error) {
+    if (error instanceof MongoServerError) {
+      res.status(400).json({
+        success: false,
+        message: `Duplicate key Error:${JSON.stringify(error.keyValue)}`,
+        details: error.message,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        msg: "server error ",
+      });
+    }
+  }
+};
