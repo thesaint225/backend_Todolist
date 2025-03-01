@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Todo from "../models/todoApp";
 import { MongoServerError } from "mongodb";
+import { NextFunction } from "express-serve-static-core";
 
 // @description all todos
 // @route api/v1/
@@ -16,12 +17,30 @@ export const getTodos = (_req: Request, res: Response) => {
 // @route        api/v1/todo/:id
 // access       public
 
-export const getTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  res.status(200).json({
-    success: "true",
-    message: `show todo no ${id}`,
-  });
+export const getTodo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const todoApp = await Todo.findById(id);
+
+    if (!todoApp) {
+      res.status(404).json({
+        success: false,
+        message: "Todo not found ",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: todoApp,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @description  create Todo
@@ -51,18 +70,55 @@ export const createTodo = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  res.status(200).json({
-    success: true,
-    msg: `update todo ${id}`,
-  });
+export const updateTodo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const todoApp = await Todo.findByIdAndUpdate(id);
+    if (!todoApp) {
+      res.status(400).json({
+        success: false,
+        message: "Todo not found ",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      msg: `update todo ${id}`,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-export const deleteTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  res.status(200).json({
-    success: true,
-    msg: {},
-  });
+// @description:    singleBootcamp
+// @route :         api/v1/todos
+// @access :       public
+
+export const SingleDeleteTodo = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const TodoApp = await Todo.findByIdAndDelete(id);
+
+    if (!TodoApp) {
+      res.status(400).json({
+        success: false,
+        message: "Todo not found ",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      msg: {},
+    });
+  } catch (error) {
+    next(error);
+  }
 };

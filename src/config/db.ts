@@ -10,7 +10,7 @@ const connectDB = async () => {
     console.log("Connecting to mongoDB ...");
     // check if MONGO_URI is present otherwise throw an error
     const mongoURI = process.env.MONGO_URI;
-    console.log("MONGO_URI", process.env.MONGO_URI);
+
     if (!mongoURI) {
       throw new Error(
         "MONGO_URI is missing or undefined in the .env file .Please verify your .env file to ensure the correct configuration"
