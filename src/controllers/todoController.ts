@@ -6,11 +6,21 @@ import { NextFunction } from "express-serve-static-core";
 // @description all todos
 // @route api/v1/
 
-export const getTodos = (_req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    msg: "show all todos",
-  });
+export const getTodos = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const todoApp = await Todo.find();
+
+    res.status(200).json({
+      success: true,
+      msg: "show all todos",
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // @description  single todo
@@ -117,6 +127,25 @@ export const SingleDeleteTodo = async (
     res.status(200).json({
       success: true,
       msg: {},
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//
+
+export const deleteAllTodos = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const todoApp = await Todo.deleteMany({});
+
+    res.status(200).json({
+      success: true,
+      message: "All todos deleted",
     });
   } catch (error) {
     next(error);
