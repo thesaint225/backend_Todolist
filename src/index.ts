@@ -1,8 +1,19 @@
 import express, { Application, Request, Response } from "express";
+import connectDB from "./config/db";
+import * as dotenv from "dotenv";
 import router from "./routes/todoRoute";
 
+// load the enviroment first variable first
+if (!process.env.MONGO_URI) {
+  throw new Error("Missing Mongo_URI");
+}
+dotenv.config();
+
+// connect database
+connectDB();
+
 const app: Application = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 5000;
 //body Parser
 app.use(express.json());
 
