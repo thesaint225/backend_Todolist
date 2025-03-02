@@ -1,38 +1,26 @@
 import { Request, Response } from "express";
 import Todo from "../models/todoApp";
 import { MongoServerError } from "mongodb";
-import { NextFunction } from "express-serve-static-core";
+import { asyncHandler } from "../helpers/asyncHandler";
 
 // @description all todos
 // @route api/v1/
 
-export const getTodos = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const todoApp = await Todo.find();
+export const getTodos = asyncHandler(async (_req: Request, res: Response) => {
+  const todoApp = await Todo.find();
 
-    res.status(200).json({
-      success: true,
-      msg: "show all todos",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  res.status(200).json({
+    success: true,
+    msg: "show all todos",
+  });
+});
 
 // @description  single todo
 // @route        api/v1/todo/:id
 // access       public
 
-export const getTodo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getTodo = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const todoApp = await Todo.findById(id);
 
@@ -48,16 +36,14 @@ export const getTodo = async (
       success: true,
       data: todoApp,
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
 // @description  create Todo
 // @route        api/v1/todos
 // @access       public
 
-export const createTodo = async (req: Request, res: Response) => {
+export const createTodo = asyncHandler(async (req: Request, res: Response) => {
   try {
     const todo = await Todo.create(req.body);
     res.status(201).json({
@@ -78,14 +64,10 @@ export const createTodo = async (req: Request, res: Response) => {
       });
     }
   }
-};
+});
 
-export const updateTodo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const updateTodo = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const todoApp = await Todo.findByIdAndUpdate(id);
     if (!todoApp) {
@@ -98,21 +80,15 @@ export const updateTodo = async (
       success: true,
       msg: `update todo ${id}`,
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
 // @description:    singleBootcamp
 // @route :         api/v1/todos
 // @access :       public
 
-export const SingleDeleteTodo = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const SingleDeleteTodo = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const TodoApp = await Todo.findByIdAndDelete(id);
 
@@ -128,26 +104,18 @@ export const SingleDeleteTodo = async (
       success: true,
       msg: {},
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
 
 //
 
-export const deleteAllTodos = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+export const deleteAllTodos = asyncHandler(
+  async (req: Request, res: Response) => {
     const todoApp = await Todo.deleteMany({});
 
     res.status(200).json({
       success: true,
       message: "All todos deleted",
     });
-  } catch (error) {
-    next(error);
   }
-};
+);
