@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import ErrorResponse from "../utils/errorResponse";
 import { MongoServerError } from "mongodb";
-import { error } from "console";
 
 const errorHandler = (
   err: Error | ErrorResponse,

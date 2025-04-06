@@ -1,9 +1,11 @@
 import mongoose, { Schema } from "mongoose";
+import slugify from "slugify";
 
 // define todoApp type
 
 type todoType = {
   title: string;
+  slug: string;
   description?: string;
   completed: boolean;
   category: "work" | "personal" | "Groceries";
@@ -21,6 +23,9 @@ const TodoSchema: Schema = new Schema(
       trim: true,
       require: true,
     },
+    slug: {
+      type: String,
+    },
     description: {
       type: String,
       trim: true,
@@ -31,7 +36,7 @@ const TodoSchema: Schema = new Schema(
     },
     category: {
       type: String,
-      enum: ["Work", "personal", "Groceries"],
+      enum: ["Work", "Personal", "Groceries"],
       required: true,
     },
   },
@@ -39,6 +44,14 @@ const TodoSchema: Schema = new Schema(
     timestamps: true,
   }
 );
+
+TodoSchema.pre<todoType>("save", function (next) {
+  this.slug = slugify(this.title.toString(), {
+    lower: true,
+    trim: true,
+  });
+  next();
+});
 
 const Todo = mongoose.model<todoType>("Todo", TodoSchema);
 
