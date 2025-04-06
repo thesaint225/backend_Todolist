@@ -36,4 +36,11 @@ if (!fs.existsSync(todoFilePath)) {
   process.exit(1);
 }
 
-let todos = unknown[]
+let todos: unknown[] = [];
+
+try {
+  todos = JSON.parse(fs.readFileSync(todoFilePath, "utf-8"));
+} catch (error) {
+  console.error("❌ Error reading JSON file:", error);
+  process.exit(1);
+}
